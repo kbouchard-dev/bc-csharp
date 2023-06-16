@@ -135,13 +135,22 @@ namespace Org.BouncyCastle.Cms
 			//
 			if (signedData.EncapContentInfo.Content != null)
 			{
-				this.signedContent = new CmsProcessableByteArray(
-					((Asn1OctetString)(signedData.EncapContentInfo.Content)).GetOctets());
+                if (signedData.EncapContentInfo.Content.GetType() == typeof(Asn1OctetString))
+                {
+                    this.signedContent = new CmsProcessableByteArray(
+                        ((Asn1OctetString)signedData.EncapContentInfo.Content).GetOctets());
+                }
+                else
+                {
+                    this.signedContent = new Pkcs7ProcessableObject(
+                        this.signedData.EncapContentInfo.ContentType,
+                        this.signedData.EncapContentInfo.Content);
+                }
 			}
-//			else
-//			{
-//				this.signedContent = null;
-//			}
+			else
+			{
+				this.signedContent = null;
+			}
 		}
 
 		/// <summary>Return the version number for this object.</summary>
